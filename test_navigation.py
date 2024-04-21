@@ -13,7 +13,7 @@ def main(page: Page) -> None:
             View(
                 route='/',
                 controls=[
-                    AppBar(title = Text('Home'), bgcolor='blue'),
+                    AppBar(title = Text('Home'), bgcolor='yellow'),
                     Text(value='Home', size=30),
                     ElevatedButton(text='go to store', on_click=lambda _: page.go('/store'))
                     ],

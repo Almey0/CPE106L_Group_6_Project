@@ -10,11 +10,11 @@ def main(page: ft.page) -> None:
     text_number: TextField = TextField(value='0', text_align=ft.TextAlign.RIGHT, width=100)
     
     def decrement(e: ControlEvent) -> None:
-        text_number.value = str(int(text_number.value - 1))
+        text_number.value = str(int(text_number.value) - 1)
         page.update()
         
     def increment(e: ControlEvent) -> None:
-        text_number.value = str(int(text_number.value + 1))
+        text_number.value = str(int(text_number.value) + 1)
         page.update()
         
     
