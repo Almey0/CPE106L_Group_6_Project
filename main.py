@@ -20,6 +20,7 @@ def login():
 
     conn.close()
 
+# register
 def register():
     registration_window = tk.Toplevel(root)
     registration_window.title("Registration")
@@ -63,12 +64,13 @@ def register():
 
 root = tk.Tk()
 root.title("Login")
-root.geometry("400x200")
+root.geometry("1280x720")
 
+# login
 tk.Label(root, text="Username:").grid(row=0, column=0, pady=(10, 5))
 entry_username = tk.Entry(root)
 entry_username.grid(row=0, column=1, pady=(10, 5))
-
+ 
 tk.Label(root, text="Password:").grid(row=1, column=0, pady=5)
 entry_password = tk.Entry(root, show="*")
 entry_password.grid(row=1, column=1, pady=5)
