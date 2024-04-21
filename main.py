@@ -29,3 +29,5 @@ def main(page: ft.page) -> None:
 
 if __name__ == '__main__':
     ft.app(target=main)
+    
+# test
