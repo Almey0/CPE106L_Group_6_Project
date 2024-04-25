@@ -7,7 +7,7 @@ from transaction import *
 root = Tk()
 root.geometry('500x500')
 root.config(height=500, width=500)
-root.resizable(False, False)
+#root.resizable(False, False)
 root.title("Login")
 
 frame = Frame(root)
