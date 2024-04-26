@@ -1,18 +1,74 @@
+# inventory.py
 from tkinter import *
+from tkinter.ttk import *
+from database import *
 
 def inventory_window():
+    def populate_tree():
+        data = db_get_item()
+        for index in data:
+            tree.insert('', 'end',
+                        values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
+    
+    #def add_item():
+    
+    #def update_item():
+    
+    #def add_item():
+    
+    
     inventory = Toplevel()
     inventory.title('Inventory')
-    inventory.config(height=500, width=500)
-    inventory.geometry('500x500')
+    inventory.config(width=800, height=500)
+    inventory.geometry('800x500')
     inventory.resizable(False, False)
     
-    frame = Frame(inventory)
+    title_bar = Frame(inventory)
+    search_bar = Frame(inventory)
+    inventory_bar = Frame(inventory)
+    function_bar = Frame(inventory)
     
-    label_title = Label(frame, 
-                        text='Inventory', 
-                        font=('Tahoma', 40))
+    label_title = Label(title_bar, text='Inventory', font=('', 40))
+    label_title.grid(row=0, column=0, pady=10)
     
-    frame.pack()
+    textbox_search = Text(search_bar, height=1, width=50)
+    textbox_search.grid(row=0, column=0, padx=10, pady=10)
     
-    frame.mainloop()
+    button_search = Button(search_bar, text='Search')
+    button_search.grid(row=0, column=1, padx=10)
+    
+    button_back = Button(search_bar, text='Back', command=inventory.destroy)
+    button_back.grid(row=0, column=2, padx=10)
+
+    tree = Treeview(inventory_bar, columns=('item_id', 'item_name', 'description', 'quantity_available', 'unit_price', 'supplier_id'), show='headings')
+    tree.heading('item_id', text="ID")
+    tree.heading('item_name', text='Item Name')
+    tree.heading('description', text='Description')
+    tree.heading('quantity_available', text='Available')
+    tree.heading('unit_price', text='Price')
+    tree.heading('supplier_id', text='Supplier')
+    tree.column('item_id', width=30)
+    tree.column('item_name', width=150)
+    tree.column('description', width=300)
+    tree.column('quantity_available', width=60)
+    tree.column('unit_price', width=50)
+    tree.column('supplier_id', width=100)
+    tree.grid(row=0, column=0, pady=20)
+    
+    populate_tree()
+    
+    button_update = Button(function_bar, text='Update Item')
+    button_update.grid(row=0, column=0, padx=10)
+    button_add = Button(function_bar, text='Add Item')
+    button_add.grid(row=0, column=1,padx=10)
+    button_delete = Button(function_bar, text='Delete Item')
+    button_delete.grid(row=0, column=2, padx=10)
+    
+    title_bar.pack()
+    search_bar.pack()
+    inventory_bar.pack()
+    function_bar.pack()
+    
+    inventory.mainloop()
+    
+inventory_window()
