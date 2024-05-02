@@ -1,6 +1,7 @@
 # inventory.py
 from tkinter import *
 from tkinter.ttk import *
+from tkinter.messagebox import *
 from database import *
 
 def inventory_window():
@@ -10,36 +11,44 @@ def inventory_window():
             tree.insert('', 'end',
                         values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
     
+    #function
+    #def search():
+    
+    
     #def add_item():
     
-    #def update_item():
-    
+    def update_item():
+        showerror('Update Error', 'No items are listed')
+        
     #def add_item():
     
-    
+    #window
     inventory = Toplevel()
     inventory.title('Inventory')
-    inventory.config(width=800, height=500)
-    inventory.geometry('800x500')
+    inventory.config(width=800, height=530)
+    inventory.geometry('800x530')
     inventory.resizable(False, False)
     
+    #group
     title_bar = Frame(inventory)
     search_bar = Frame(inventory)
     inventory_bar = Frame(inventory)
     function_bar = Frame(inventory)
+    option_bar = Frame(inventory)
     
+    #title
     label_title = Label(title_bar, text='Inventory', font=('', 40))
     label_title.grid(row=0, column=0, pady=10)
     
+    #search
     textbox_search = Text(search_bar, height=1, width=50)
     textbox_search.grid(row=0, column=0, padx=10, pady=10)
-    
     button_search = Button(search_bar, text='Search')
     button_search.grid(row=0, column=1, padx=10)
-    
     button_back = Button(search_bar, text='Back', command=inventory.destroy)
     button_back.grid(row=0, column=2, padx=10)
 
+    #table
     tree = Treeview(inventory_bar, columns=('item_id', 'item_name', 'description', 'quantity_available', 'unit_price', 'supplier_id'), show='headings')
     tree.heading('item_id', text="ID")
     tree.heading('item_name', text='Item Name')
@@ -57,18 +66,52 @@ def inventory_window():
     
     populate_tree()
     
-    button_update = Button(function_bar, text='Update Item')
-    button_update.grid(row=0, column=0, padx=10)
+    #option
+    option_bar1 = Frame(option_bar)
+    label_item_name = Label(option_bar1, text='Item: ', anchor='e')
+    label_item_name.grid(row=0, column=0, pady=5, sticky='e')
+    textbox_item_name = Text(option_bar1, height=1, width=20)
+    textbox_item_name.grid(row=0, column=1)
+    label_description = Label(option_bar1, text='Description: ', anchor='e')
+    label_description.grid(row=0, column=2, padx=(20, 0), pady=10, sticky='e')
+    textbox_description = Text(option_bar1, height=1, width=40)
+    textbox_description.grid(row=0, column=3)
+    
+    option_bar2 = Frame(option_bar)
+    label_quantity_available = Label(option_bar2, text='Quantity: ', anchor='e')
+    label_quantity_available.grid(row=0, column=0, sticky='e')
+    textbox_quantity_available = Text(option_bar2, height=1, width=10)
+    textbox_quantity_available.grid(row=0, column=1)
+    label_unit_price = Label(option_bar2, text='Unit Price: ', anchor='e')
+    label_unit_price.grid(row=0, column=2, pady=10, padx=(20,0), sticky='e')
+    textbox_unit_price = Text(option_bar2, height=1, width=10)
+    textbox_unit_price.grid(row=0, column=3)
+    label_supplier = Label(option_bar2, text='Supplier: ', anchor='e')
+    label_supplier.grid(row=0, column=4, padx=(20,0), sticky='e')
+    supplier_name = StringVar(inventory)
+    data_supplier_name = db_get_supplier_name()
+    supplier_names = [name[0] for name in data_supplier_name]
+    supplier_name.set("")
+    dropdown_supplier = OptionMenu(option_bar2, supplier_name, *supplier_names)
+    dropdown_supplier.grid(row=0, column=5)
+    
+    #action
+    button_update = Button(function_bar, text='Update Item', command=update_item)
+    button_update.grid(row=0, column=0, padx=10, pady=10, )
     button_add = Button(function_bar, text='Add Item')
     button_add.grid(row=0, column=1,padx=10)
     button_delete = Button(function_bar, text='Delete Item')
     button_delete.grid(row=0, column=2, padx=10)
     
+    #display
     title_bar.pack()
     search_bar.pack()
     inventory_bar.pack()
+    option_bar.pack()
+    option_bar1.pack()
+    option_bar2.pack()
     function_bar.pack()
     
     inventory.mainloop()
-    
-inventory_window()
+   
+inventory_window() #comment this out
