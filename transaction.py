@@ -71,20 +71,22 @@ def transaction_window():
     label_item_name.grid(row=0, column=0, pady=5, sticky='e')
     textbox_item_name = Text(option_bar1, height=1, width=20)
     textbox_item_name.grid(row=0, column=1)
-    label_supplier_name = Label(option_bar1, text='Contact Person: ', anchor='e')
+    label_supplier_name = Label(option_bar1, text='Supplier Name: ', anchor='e')
     label_supplier_name.grid(row=0, column=2, padx=(20, 0), pady=10, sticky='e')
     textbox_supplier_name = Text(option_bar1, height=1, width=20)
-    textbox_supplier_name.grid(row=0, column=3)
     
     option_bar2 = Frame(option_bar)
-    label_transaction_type = Label(option_bar2, text='Contact Number: ', anchor='e')
+    textbox_supplier_name.grid(row=0, column=3)
+    label_transaction_type = Label(option_bar2, text='Type: ', anchor='e')
     label_transaction_type.grid(row=0, column=0, sticky='e')
-    textbox_transaction_type = Text(option_bar2, height=1, width=10)
+    textbox_transaction_type = Combobox(option_bar2, height=1, width=10)
     textbox_transaction_type.grid(row=0, column=1)
-    label_quantity = Label(option_bar2, text='Email: ', anchor='e')
+    label_quantity = Label(option_bar2, text='Quantity: ', anchor='e')
     label_quantity.grid(row=0, column=2, pady=10, padx=(20,0), sticky='e')
-    textbox_quantity = Text(option_bar2, height=1, width=35)
+    textbox_quantity = Text(option_bar2, height=1, width=10)
     textbox_quantity.grid(row=0, column=3)
+    
+    
     
     title_bar.pack()
     search_bar.pack()
