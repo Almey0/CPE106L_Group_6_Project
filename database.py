@@ -1,4 +1,3 @@
-#database.py
 from sqlite3 import *
 
 connection = connect('Vita-Vault.db')
@@ -34,3 +33,25 @@ def db_get_transaction():
         INNER JOIN Item ON Transactions.item_id = Item.item_id
     ''')
     return cursor.fetchall()
+
+def db_update_item(item_id, item_name, description, quantity_available, unit_price, supplier_id):
+    cursor.execute('''
+        UPDATE Item
+        SET item_name=?, description=?, quantity_available=?, unit_price=?, supplier_id=?
+        WHERE item_id=?
+    ''', (item_name, description, quantity_available, unit_price, supplier_id, item_id))
+    connection.commit()
+
+def db_add_item(item_name, description, quantity_available, unit_price, supplier_id):
+    cursor.execute('''
+        INSERT INTO Item (item_name, description, quantity_available, unit_price, supplier_id)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (item_name, description, quantity_available, unit_price, supplier_id))
+    connection.commit()
+
+def db_delete_item(item_id):
+    cursor.execute('''
+        DELETE FROM Item
+        WHERE item_id=?
+    ''', (item_id,))
+    connection.commit()

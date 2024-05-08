@@ -6,21 +6,79 @@ from database import *
 
 def inventory_window():
     def populate_tree():
+    # Clear existing items in the treeview
+        for item in tree.get_children():
+            tree.delete(item)
+        # Populate the treeview with updated data
         data = db_get_item()
         for index in data:
             tree.insert('', 'end',
                         values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
-    
-    #function
-    #def search():
-    
-    
-    #def add_item():
+
+    def update_textbox_values(event):
+        # Get the selected item from the treeview
+        selected_item = tree.focus()
+        if not selected_item:
+            return
+        # Get the values of the selected item
+        item_name = tree.item(selected_item, "values")[1]
+        description = tree.item(selected_item, "values")[2]
+        quantity_available = tree.item(selected_item, "values")[3]
+        unit_price = tree.item(selected_item, "values")[4][1:]  # Remove "$" from the price
+        supplier = tree.item(selected_item, "values")[5]
+        # Update the textboxes with the selected item's values
+        textbox_item_name.delete("1.0", "end")
+        textbox_item_name.insert("1.0", item_name)
+        textbox_description.delete("1.0", "end")
+        textbox_description.insert("1.0", description)
+        textbox_quantity_available.delete("1.0", "end")
+        textbox_quantity_available.insert("1.0", quantity_available)
+        textbox_unit_price.delete("1.0", "end")
+        textbox_unit_price.insert("1.0", unit_price)
+        supplier_name.set(supplier)
     
     def update_item():
-        showerror('Update Error', 'No items are listed')
-        
-    #def add_item():
+        # Check if an item is selected
+        selected_item = tree.focus()
+        if not selected_item:
+            showerror('Update Error', 'Please select an item to update.')
+            return
+        # Get values from the entry widgets
+        item_name = textbox_item_name.get("1.0", "end-1c")
+        description = textbox_description.get("1.0", "end-1c")
+        quantity = textbox_quantity_available.get("1.0", "end-1c")
+        unit_price = textbox_unit_price.get("1.0", "end-1c")
+        supplier = supplier_name.get()
+        # Update the item in the database
+        db_update_item(selected_item, item_name, description, quantity, unit_price, supplier)
+        # Refresh the treeview
+        populate_tree()
+        showinfo('Update Success', 'Item updated successfully.')
+
+    def add_item():
+        # Get values from the entry widgets
+        item_name = textbox_item_name.get("1.0", "end-1c")
+        description = textbox_description.get("1.0", "end-1c")
+        quantity = textbox_quantity_available.get("1.0", "end-1c")
+        unit_price = textbox_unit_price.get("1.0", "end-1c")
+        supplier = supplier_name.get()
+        # Add the item to the database
+        db_add_item(item_name, description, quantity, unit_price, supplier)
+        # Refresh the treeview
+        populate_tree()
+        showinfo('Add Success', 'Item added successfully.')
+
+    def delete_item():
+        # Check if an item is selected
+        selected_item = tree.focus()
+        if not selected_item:
+            showerror('Delete Error', 'Please select an item to delete.')
+            return
+        # Delete the item from the database
+        db_delete_item(selected_item)
+        # Refresh the treeview
+        populate_tree()
+        showinfo('Delete Success', 'Item deleted successfully.')
     
     #window
     inventory = Toplevel()
@@ -66,6 +124,8 @@ def inventory_window():
     
     populate_tree()
     
+    tree.bind("<<TreeviewSelect>>", update_textbox_values)
+    
     #option
     option_bar1 = Frame(option_bar)
     label_item_name = Label(option_bar1, text='Item: ', anchor='e')
@@ -98,9 +158,9 @@ def inventory_window():
     #action
     button_update = Button(function_bar, text='Update Item', command=update_item)
     button_update.grid(row=0, column=0, padx=10, pady=10)
-    button_add = Button(function_bar, text='Add Item')
+    button_add = Button(function_bar, text='Add Item', command=add_item)
     button_add.grid(row=0, column=1,padx=10)
-    button_delete = Button(function_bar, text='Delete Item')
+    button_delete = Button(function_bar, text='Delete Item', command=delete_item)
     button_delete.grid(row=0, column=2, padx=10)
     
     #display
@@ -114,4 +174,4 @@ def inventory_window():
     
     inventory.mainloop()
    
-#inventory_window() #comment this out
+inventory_window() #comment this out
