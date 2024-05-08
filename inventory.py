@@ -6,14 +6,13 @@ from database import *
 
 def inventory_window():
     def populate_tree():
-    # Clear existing items in the treeview
+        # Clear existing items in the treeview
         for item in tree.get_children():
             tree.delete(item)
         # Populate the treeview with updated data
         data = db_get_item()
         for index in data:
-            tree.insert('', 'end',
-                        values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
+            tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
 
     def update_textbox_values(event):
         # Get the selected item from the treeview
@@ -46,11 +45,11 @@ def inventory_window():
         # Get values from the entry widgets
         item_name = textbox_item_name.get("1.0", "end-1c")
         description = textbox_description.get("1.0", "end-1c")
-        quantity = textbox_quantity_available.get("1.0", "end-1c")
+        quantity_available = textbox_quantity_available.get("1.0", "end-1c")
         unit_price = textbox_unit_price.get("1.0", "end-1c")
         supplier = supplier_name.get()
         # Update the item in the database
-        db_update_item(selected_item, item_name, description, quantity, unit_price, supplier)
+        db_update_item(selected_item, item_name, description, quantity_available, unit_price, supplier)
         # Refresh the treeview
         populate_tree()
         showinfo('Update Success', 'Item updated successfully.')
