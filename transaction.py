@@ -98,4 +98,4 @@ def transaction_window():
     
     transaction.mainloop()
     
-transaction_window() # comment this out
+#transaction_window() # comment this out

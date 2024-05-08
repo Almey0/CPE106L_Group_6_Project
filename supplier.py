@@ -94,4 +94,4 @@ def supplier_window():
     
     supplier.mainloop()
     
-supplier_window() # comment this out
+#supplier_window() # comment this out

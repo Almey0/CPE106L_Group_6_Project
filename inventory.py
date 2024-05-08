@@ -114,4 +114,4 @@ def inventory_window():
     
     inventory.mainloop()
    
-inventory_window() #comment this out
+#inventory_window() #comment this out
