@@ -1,5 +1,4 @@
 from sqlite3 import *
-
 connection = connect('Vita-Vault.db')
 cursor = connection.cursor()
 

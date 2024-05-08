@@ -3,16 +3,21 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter.messagebox import *
 from database import *
-
-def inventory_window():
+def inventory_window(): 
     def populate_tree():
         # Clear existing items in the treeview
         for item in tree.get_children():
             tree.delete(item)
         # Populate the treeview with updated data
         data = db_get_item()
-        for index in data:
-            tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
+        #for index in data:
+            #tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
+    def displayAll():
+        tree.delete(*tree.get_children())
+        for row in db_get_item():
+            tree.insert("", END, values=row)
+        
+            
 
     def update_textbox_values(event):
         # Get the selected item from the treeview
@@ -52,7 +57,17 @@ def inventory_window():
         db_update_item(selected_item, item_name, description, quantity_available, unit_price, supplier)
         # Refresh the treeview
         populate_tree()
+        displayAll()
         showinfo('Update Success', 'Item updated successfully.')
+    
+        def populate_tree():
+            tree.delete(*tree.get_children())
+            updated_data = db_fetch_updated_data()
+            for item in updated_data:
+                tree.insert('', 'end', values=item)
+                tree.update()  # or tree.update() if updating just the treeview
+
+
 
     def add_item():
         # Get values from the entry widgets
@@ -65,6 +80,7 @@ def inventory_window():
         db_add_item(item_name, description, quantity, unit_price, supplier)
         # Refresh the treeview
         populate_tree()
+        displayAll()
         showinfo('Add Success', 'Item added successfully.')
 
     def delete_item():
@@ -77,6 +93,7 @@ def inventory_window():
         db_delete_item(selected_item)
         # Refresh the treeview
         populate_tree()
+        displayAll()
         showinfo('Delete Success', 'Item deleted successfully.')
     
     #window
@@ -119,7 +136,10 @@ def inventory_window():
     tree.column('quantity_available', width=60)
     tree.column('unit_price', width=50)
     tree.column('supplier_id', width=100)
+    tree.delete(*tree.get_children())  # Clear existing items
+    populate_tree()
     tree.grid(row=0, column=0, pady=20)
+    displayAll()
     
     populate_tree()
     
