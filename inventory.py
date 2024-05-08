@@ -97,7 +97,7 @@ def inventory_window():
     
     #action
     button_update = Button(function_bar, text='Update Item', command=update_item)
-    button_update.grid(row=0, column=0, padx=10, pady=10, )
+    button_update.grid(row=0, column=0, padx=10, pady=10)
     button_add = Button(function_bar, text='Add Item')
     button_add.grid(row=0, column=1,padx=10)
     button_delete = Button(function_bar, text='Delete Item')

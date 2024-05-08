@@ -59,13 +59,6 @@ def transaction_window():
     
     populate_tree()
     
-    button_update = Button(function_bar, text='Update Transaction')
-    button_update.grid(row=0, column=0, padx=10)
-    button_add = Button(function_bar, text='Add Transaction')
-    button_add.grid(row=0, column=1,padx=10)
-    button_delete = Button(function_bar, text='Delete Transaction')
-    button_delete.grid(row=0, column=2, padx=10)
-    
     option_bar1 = Frame(option_bar)
     label_item_name = Label(option_bar1, text='Item Name: ', anchor='e')
     label_item_name.grid(row=0, column=0, pady=5, sticky='e')
@@ -86,15 +79,20 @@ def transaction_window():
     textbox_quantity = Text(option_bar2, height=1, width=10)
     textbox_quantity.grid(row=0, column=3)
     
-    
+    button_update = Button(function_bar, text='Update Transaction')
+    button_update.grid(row=0, column=0, padx=10, pady=10)
+    button_add = Button(function_bar, text='Add Transaction')
+    button_add.grid(row=0, column=1,padx=10)
+    button_delete = Button(function_bar, text='Delete Transaction')
+    button_delete.grid(row=0, column=2, padx=10)
     
     title_bar.pack()
     search_bar.pack()
     transaction_bar.pack()
-    function_bar.pack()
-    option_bar.pack()
     option_bar1.pack()
     option_bar2.pack()
+    option_bar.pack()
+    function_bar.pack()
     
     transaction.mainloop()
     

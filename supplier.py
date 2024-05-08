@@ -57,13 +57,6 @@ def supplier_window():
     
     populate_tree()
     
-    button_update = Button(function_bar, text='Update Supplier')
-    button_update.grid(row=0, column=0, padx=10)
-    button_add = Button(function_bar, text='Add Supplier')
-    button_add.grid(row=0, column=1,padx=10)
-    button_delete = Button(function_bar, text='Delete Supplier')
-    button_delete.grid(row=0, column=2, padx=10)
-    
     option_bar1 = Frame(option_bar)
     label_item_name = Label(option_bar1, text='Supplier Name: ', anchor='e')
     label_item_name.grid(row=0, column=0, pady=5, sticky='e')
@@ -84,13 +77,20 @@ def supplier_window():
     textbox_email = Text(option_bar2, height=1, width=35)
     textbox_email.grid(row=0, column=3)
     
+    button_update = Button(function_bar, text='Update Supplier')
+    button_update.grid(row=0, column=0, padx=10, pady=10)
+    button_add = Button(function_bar, text='Add Supplier')
+    button_add.grid(row=0, column=1,padx=10)
+    button_delete = Button(function_bar, text='Delete Supplier')
+    button_delete.grid(row=0, column=2, padx=10)
+    
     title_bar.pack()
     search_bar.pack()
     supplier_bar.pack()
-    function_bar.pack()
     option_bar.pack()
     option_bar1.pack()
     option_bar2.pack()
+    function_bar.pack()
     
     supplier.mainloop()
     
