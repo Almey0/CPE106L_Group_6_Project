@@ -20,32 +20,78 @@ def inventory_window():
         if not selected_item:
             showerror('Update Error', 'Please select an item to update.')
             return
+
+        # Get item_id from the selected item in the treeview
+        item_id = tree.item(selected_item, 'values')[0]  # Assuming item_id is at index 0
+
         # Get values from the entry widgets
         item_name = textbox_item_name.get("1.0", "end-1c")
         description = textbox_description.get("1.0", "end-1c")
         quantity = textbox_quantity_available.get("1.0", "end-1c")
         unit_price = textbox_unit_price.get("1.0", "end-1c")
         supplier = supplier_name.get()
+
         # Update the item in the database
-        db_update_item(selected_item, item_name, description, quantity, unit_price, supplier)
+        db_update_item(item_id, item_name, description, quantity, unit_price, supplier)
+
+        # Clear text in the entry widgets
+        textbox_item_name.delete("1.0", "end")
+        textbox_description.delete("1.0", "end")
+        textbox_quantity_available.delete("1.0", "end")
+        textbox_unit_price.delete("1.0", "end")
+
         # Refresh the treeview
         populate_tree()
         showinfo('Update Success', 'Item updated successfully.')
 
     def add_item():
         # Get values from the entry widgets
-        item_name = textbox_item_name.get("1.0", "end-1c")
-        description = textbox_description.get("1.0", "end-1c")
-        quantity = textbox_quantity_available.get("1.0", "end-1c")
-        unit_price = textbox_unit_price.get("1.0", "end-1c")
-        supplier = supplier_name.get()
-        # Add the item to the database
-        db_add_item(item_name, description, quantity, unit_price, supplier)
+        item_name = textbox_item_name.get("1.0", "end-1c").strip()
+        description = textbox_description.get("1.0", "end-1c").strip()
+        quantity_available_str = textbox_quantity_available.get("1.0", "end-1c").strip()
+        unit_price_str = textbox_unit_price.get("1.0", "end-1c").strip()
+        selected_supplier = supplier_name.get()  # Renamed the variable
+
+        # Check if any parameter is empty
+        if not all([item_name, description, quantity_available_str, unit_price_str, selected_supplier]):
+            showerror('Add Error', 'Please fill in all fields.')
+            return
+
+        # Validate data types
+        try:
+            quantity_available = int(quantity_available_str)
+            unit_price = float(unit_price_str)
+        except ValueError:
+            showerror('Add Error', 'Quantity and Unit Price must be numeric.')
+            return
+
+        # Get the supplier_id corresponding to the selected supplier_name
+        cursor.execute('''
+            SELECT supplier_id
+            FROM Supplier
+            WHERE supplier_name=?
+        ''', (selected_supplier,))
+        result = cursor.fetchone()
+        if result:
+            supplier_id = result[0]
+        else:
+            showerror('Add Error', 'Supplier not found.')
+            return
+
+        # Add the item to the database with the correct supplier_id
+        db_add_item(item_name, description, quantity_available, unit_price, supplier_id)
+        
+        # Clear text in the entry widgets
+        textbox_item_name.delete("1.0", "end")
+        textbox_description.delete("1.0", "end")
+        textbox_quantity_available.delete("1.0", "end")
+        textbox_unit_price.delete("1.0", "end")
+        
         # Refresh the treeview
         populate_tree()
+
         showinfo('Add Success', 'Item added successfully.')
 
-    
     def delete_item():
     # Check if an item is selected
         selected_item = tree.focus()
@@ -56,6 +102,13 @@ def inventory_window():
         item_id = tree.item(selected_item, 'values')[0]  # Assuming item_id is in the first column
         # Delete the item from the database
         db_delete_item(item_id)
+        
+        # Clear text in the entry widgets
+        textbox_item_name.delete("1.0", "end")
+        textbox_description.delete("1.0", "end")
+        textbox_quantity_available.delete("1.0", "end")
+        textbox_unit_price.delete("1.0", "end")
+        
         # Refresh the treeview
         populate_tree()
         showinfo('Delete Success', 'Item deleted successfully.')
@@ -74,11 +127,12 @@ def inventory_window():
             textbox_quantity_available.delete('1.0', 'end')
             textbox_quantity_available.insert('1.0', item_values[3])  # Assuming quantity_available is in the fourth column
             textbox_unit_price.delete('1.0', 'end')
-            textbox_unit_price.insert('1.0', item_values[4])  # Assuming unit_price is in the fifth column
+            textbox_unit_price.insert('1.0', item_values[4][1:])  # Assuming unit_price is in the fifth column
             supplier_name.set(item_values[5])  # Assuming supplier_name is in the sixth column
     
     #window
-    inventory = Toplevel()
+    #inventory = Toplevel()
+    inventory = Tk() # comment this out
     inventory.title('Inventory')
     inventory.config(width=800, height=530)
     inventory.geometry('800x530')

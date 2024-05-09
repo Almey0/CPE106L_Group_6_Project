@@ -34,7 +34,6 @@ def db_get_transaction():
     return cursor.fetchall()
 
 def db_update_item(item_id, item_name, description, quantity_available, unit_price, supplier_name):
-    # Fetch the supplier_id corresponding to the selected supplier_name
     cursor.execute('''
         SELECT supplier_id
         FROM Supplier
@@ -53,7 +52,6 @@ def db_update_item(item_id, item_name, description, quantity_available, unit_pri
     else:
         # Supplier not found, handle error or show message
         print('Supplier not found.')
-
 
 def db_add_item(item_name, description, quantity_available, unit_price, supplier_id):
     cursor.execute('''
