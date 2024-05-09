@@ -33,13 +33,27 @@ def db_get_transaction():
     ''')
     return cursor.fetchall()
 
-def db_update_item(item_id, item_name, description, quantity_available, unit_price, supplier_id):
+def db_update_item(item_id, item_name, description, quantity_available, unit_price, supplier_name):
+    # Fetch the supplier_id corresponding to the selected supplier_name
     cursor.execute('''
-        UPDATE Item
-        SET item_name=?, description=?, quantity_available=?, unit_price=?, supplier_id=?
-        WHERE item_id=?
-    ''', (item_name, description, quantity_available, unit_price, supplier_id, item_id))
-    connection.commit()
+        SELECT supplier_id
+        FROM Supplier
+        WHERE supplier_name=?
+    ''', (supplier_name,))
+    result = cursor.fetchone()
+    if result:
+        supplier_id = result[0]
+        # Update the item in the database with the fetched supplier_id
+        cursor.execute('''
+            UPDATE Item
+            SET item_name=?, description=?, quantity_available=?, unit_price=?, supplier_id=?
+            WHERE item_id=?
+        ''', (item_name, description, quantity_available, unit_price, supplier_id, item_id))
+        connection.commit()
+    else:
+        # Supplier not found, handle error or show message
+        print('Supplier not found.')
+
 
 def db_add_item(item_name, description, quantity_available, unit_price, supplier_id):
     cursor.execute('''
