@@ -146,8 +146,8 @@ def inventory_window():
             supplier_name.set(item_values[5])  # Assuming supplier_name is in the sixth column
     
     #window
-    #inventory = Toplevel()
-    inventory = Tk() # comment this out
+    inventory = Toplevel()
+    #inventory = Tk() # comment this out
     inventory.title('Inventory')
     inventory.config(width=800, height=530)
     inventory.geometry('800x530')
@@ -239,4 +239,4 @@ def inventory_window():
     
     inventory.mainloop()
    
-inventory_window() #comment this out
+#inventory_window() #comment this out
