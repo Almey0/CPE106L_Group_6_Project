@@ -14,6 +14,21 @@ def inventory_window():
         for index in data:
             tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
 
+    def search_items():
+        # Get the search text from the textbox_search
+        search_text = textbox_search.get("1.0", "end-1c").strip().lower()  # Convert to lowercase for case-insensitive search
+
+        # Clear existing items in the treeview
+        for item in tree.get_children():
+            tree.delete(item)
+
+        # Fetch data from the database and filter based on search text
+        data = db_get_item()
+        for index in data:
+            # Check if any column value contains the search text (case-insensitive)
+            if any(search_text in str(value).lower() for value in index):
+                tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], f"${index[4]:.2f}", index[5]))
+
     def update_item():
         # Check if an item is selected
         selected_item = tree.focus()
@@ -152,7 +167,7 @@ def inventory_window():
     #search
     textbox_search = Text(search_bar, height=1, width=50)
     textbox_search.grid(row=0, column=0, padx=10, pady=10)
-    button_search = Button(search_bar, text='Search')
+    button_search = Button(search_bar, text='Search', command=search_items)
     button_search.grid(row=0, column=1, padx=10)
     button_back = Button(search_bar, text='Back', command=inventory.destroy)
     button_back.grid(row=0, column=2, padx=10)
