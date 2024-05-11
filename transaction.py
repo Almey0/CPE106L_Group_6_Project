@@ -1,19 +1,25 @@
+import datetime
 from tkinter import *
 from tkinter.ttk import *
 from tkinter.messagebox import *
 from database import *
 
+
 def transaction_window():
     def populate_tree():
+        # Clear existing items in the treeview
+        for item in tree.get_children():
+            tree.delete(item)
+        # Fetch data from the database and populate the treeview
         data = db_get_transaction()
         for index in data:
-            tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], index[4], index[5], index[6]))
+            tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], index[4], index[5]))
 
     def search_items():
-        # Get the search text from the textbox_search
+    # Get the search text from the textbox_search
         search_text = textbox_search.get("1.0", "end-1c").strip().lower()
 
-        # Clear existing items in the treeview
+    # Clear existing items in the treeview
         for item in tree.get_children():
             tree.delete(item)
 
@@ -22,7 +28,7 @@ def transaction_window():
         for index in data:
             # Check if any column value contains the search text (case-insensitive)
             if any(search_text in str(value).lower() for value in index):
-                tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], index[4], index[5], index[6]))
+                tree.insert('', 'end', values=(index[0], index[1], index[2], index[3], index[4]))
 
     def update_transaction():
         selected_transaction = tree.focus()
@@ -34,48 +40,39 @@ def transaction_window():
 
         item_name = combobox_item_name.get()
         supplier_name = combobox_supplier_name.get()
-        transaction_type = combobox_transaction_type.get()
         quantity = int(textbox_quantity.get("1.0", "end-1c").strip())
+        transaction_type = combobox_transaction_type.get()
 
-        print("Item Name:", item_name)
-        print("Supplier Name:", supplier_name)
-
-        # Print the result of db_get_item_details for debugging
         item_details = db_get_item_details(item_name, supplier_name)
-        print("Item Details:", item_details)
-
         if item_details is None:
             showerror('Item Error', 'Item details not found.')
             return
 
         item_id, unit_price = item_details
-        db_update_transaction(transaction_id, item_id, transaction_type, quantity)
+        total_cost = quantity * unit_price
+
+        db_update_transaction(transaction_id, item_id, transaction_type, quantity, total_cost)  # Corrected parameters
 
         populate_tree()
         showinfo('Update Success', 'Transaction updated successfully.')
 
-
     def add_transaction():
         item_name = combobox_item_name.get()
         supplier_name = combobox_supplier_name.get()
-        transaction_type = combobox_transaction_type.get()
         quantity = int(textbox_quantity.get("1.0", "end-1c").strip())
+        transaction_type = combobox_transaction_type.get()
 
-        # Get the item_id and supplier_id based on the item_name and supplier_name
         item_details = db_get_item_details(item_name, supplier_name)
         if item_details:
             item_id, unit_price = item_details
-            supplier_id = db_get_supplier_id(supplier_name)
-            if supplier_id:
-                db_add_transaction(transaction_type, quantity, item_id, supplier_id)
-                populate_tree()
-                showinfo('Add Success', 'Transaction added successfully.')
-            else:
-                showerror('Supplier Error', 'Supplier not found.')
+            total_cost = quantity * unit_price
+
+            db_add_transaction(transaction_type, quantity, datetime.now(), total_cost, item_id, db_get_supplier_id(supplier_name))  # Corrected parameters
+
+            populate_tree()
+            showinfo('Add Success', 'Transaction added successfully.')
         else:
             showerror('Item Error', 'Item details not found.')
-
-
 
     def delete_transaction():
         selected_transaction = tree.focus()
@@ -103,7 +100,6 @@ def transaction_window():
             # Delete the existing content in the quantity textbox and insert the selected quantity
             textbox_quantity.delete('1.0', 'end')
             textbox_quantity.insert('1.0', str(transaction_values[4]))
-
 
     # Window
     transaction = Toplevel()
@@ -133,20 +129,19 @@ def transaction_window():
 
     # Table
     tree = Treeview(transaction_bar, columns=('transaction_id', 'item_name', 'supplier_name', 'transaction_type', 'quantity', 'transaction_date', 'total_cost'), show='headings', selectmode='browse')
-    tree.heading('transaction_id', text="ID")
     tree.heading('item_name', text='Item Name')
     tree.heading('supplier_name', text='Supplier')
     tree.heading('transaction_type', text='Type')
     tree.heading('quantity', text='Quantity')
-    tree.heading('transaction_date', text='Date')
-    tree.heading('total_cost', text='Total Cost')
     tree.column('transaction_id', width=30)
     tree.column('item_name', width=150)
     tree.column('supplier_name', width=100)
     tree.column('transaction_type', width=70)
+    tree.column('transaction_date', width=70)  # Corrected line
     tree.column('quantity', width=70)
-    tree.column('transaction_date', width=80, anchor='c')
-    tree.column('total_cost', width=80)
+    tree.column('total_cost', width=80, anchor='c')
+    tree.heading('transaction_date', text='Date')  # Add heading for date column
+    tree.heading('total_cost', text='Total Cost')
     tree.grid(row=0, column=0, pady=20)
     tree.bind('<<TreeviewSelect>>', show_selected_transaction)
 

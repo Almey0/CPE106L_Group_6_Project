@@ -87,63 +87,13 @@ def db_add_transaction(transaction_type, quantity, transaction_date, total_cost,
     ''', (transaction_type, quantity, transaction_date, total_cost, item_id, supplier_id))
     connection.commit()
 
-def db_update_transaction(transaction_id, item_name, supplier_name, transaction_type, quantity):
-    # Get the item ID using the item_name and supplier_name parameters
-    item_details = db_get_item_details(item_name, supplier_name)
-
-    if item_details is None:
-        # Handle error or show message
-        print('Item not found.')
-        return
-
-    item_id, unit_price = item_details
-
-    if transaction_type == 'Purchase':
-        # Update the transaction in the database with the fetched item details and the calculated total cost
-        cursor.execute('''
-            UPDATE Transactions
-          SET item_id=?, unit_price=?, quantity=?, total_cost=?, transaction_type=?
-            WHERE transaction_id=?
-        ''', (item_id, unit_price, quantity, quantity * unit_price, transaction_type, transaction_id))
-        connection.commit()
-    elif transaction_type == 'Sell':
-        # Convert the quantity variable to an integer
-        quantity = int(quantity)
-
-        # Check if the quantity available is sufficient for the sell transaction
-        cursor.execute('''
-            SELECT quantity_available
-            FROM Item
-            WHERE item_id=?
-        ''', (item_id,))
-        result = cursor.fetchone()
-        if result:
-            quantity_available = result[0]
-            if quantity_available >= quantity:
-                # Update the item quantity available in the database
-                cursor.execute('''
-                    UPDATE Item
-                    SET quantity_available=quantity_available-?
-                    WHERE item_id=?
-                ''', (quantity, item_id))
-                connection.commit()
-
-                # Update the transaction in the database with the fetched item details and the given total cost
-                cursor.execute('''
-                    UPDATE Transactions
-                    SET item_id=?, quantity=?, total_cost=?, transaction_type=?
-                    WHERE transaction_id=?
-                ''', (item_id, quantity, quantity * unit_price, transaction_type, transaction_id))
-                connection.commit()
-            else:
-                # Handle error or show message
-                print('Insufficient quantity available.')
-        else:
-            # Handle error or show message
-            print('Item not found.')
-    else:
-        # Handle error or show message
-        print('Invalid transaction type.')
+def db_update_transaction(transaction_id, item_id, transaction_type, quantity, total_cost):
+    cursor.execute('''
+        UPDATE Transactions
+        SET item_id=?, transaction_type=?, quantity=?, total_cost=?
+        WHERE transaction_id=?
+    ''', (item_id, transaction_type, quantity, total_cost, transaction_id))
+    connection.commit()
 
 def db_delete_transaction(transaction_id):
     cursor.execute('''
