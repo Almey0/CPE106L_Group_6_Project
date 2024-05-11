@@ -33,6 +33,19 @@ def db_get_transaction():
     ''')
     return cursor.fetchall()
 
+def db_get_item_details(item_name, supplier_name):
+    cursor.execute('''
+        SELECT item_id, unit_price
+        FROM Item
+        JOIN Supplier ON Item.supplier_id = Supplier.supplier_id
+        WHERE item_name=? AND supplier_name=?
+    ''', (item_name, supplier_name))
+    result = cursor.fetchone()
+    if result:
+        return result[0], result[1]  # Return item_id and unit_price as a tuple
+    else:
+        return None  
+    
 def db_update_item(item_id, item_name, description, quantity_available, unit_price, supplier_name):
     cursor.execute('''
         SELECT supplier_id
@@ -65,4 +78,87 @@ def db_delete_item(item_id):
         DELETE FROM Item
         WHERE item_id=?
     ''', (item_id,))
+    connection.commit()
+
+def db_add_transaction(transaction_type, quantity, transaction_date, total_cost, item_id, supplier_id):
+    cursor.execute('''
+        INSERT INTO Transactions (transaction_type, quantity, transaction_date, total_cost, item_id, supplier_id)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (transaction_type, quantity, transaction_date, total_cost, item_id, supplier_id))
+    connection.commit()
+
+def db_update_transaction(transaction_id, item_id, transaction_type, quantity, total_cost):
+    cursor.execute('''
+        UPDATE Transactions
+        SET item_id=?, transaction_type=?, quantity=?, total_cost=?
+        WHERE transaction_id=?
+    ''', (item_id, transaction_type, quantity, total_cost, transaction_id))
+    connection.commit()
+
+def db_delete_transaction(transaction_id):
+    cursor.execute('''
+        DELETE FROM Transactions
+        WHERE transaction_id=?
+    ''', (transaction_id,))
+    connection.commit()
+
+def db_get_supplier_names(item_name):
+    cursor.execute('''
+        SELECT DISTINCT Supplier.supplier_name
+        FROM Item
+        JOIN Supplier ON Item.supplier_id = Supplier.supplier_id
+        WHERE Item.item_name=?
+    ''', (item_name,))
+    result = cursor.fetchall()
+    if result:
+        return [row[0] for row in result]
+    else:
+        return []
+    
+def db_get_item_names():
+    cursor.execute('''
+        SELECT item_name
+        FROM Item
+    ''')
+    return [row[0] for row in cursor.fetchall()]
+
+def db_get_all_supplier_names():
+    cursor.execute('''
+        SELECT supplier_name
+        FROM Supplier
+    ''')
+    return [row[0] for row in cursor.fetchall()]
+
+def db_get_supplier_id(supplier_name):
+    cursor.execute('''
+        SELECT supplier_id
+        FROM Supplier
+        WHERE supplier_name=?
+    ''', (supplier_name,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    else:
+        return None
+    
+def db_add_supplier(supplier_name, contact_person, contact_number, email):
+    cursor.execute('''
+        INSERT INTO Supplier (supplier_name, contact_person, contact_number, email)
+        VALUES (?, ?, ?, ?)
+    ''', (supplier_name, contact_person, contact_number, email))
+    connection.commit()
+
+def db_update_supplier(supplier_id, supplier_name, contact_person, contact_number, email):
+    cursor.execute('''
+        UPDATE Supplier
+        SET supplier_name=?, contact_person=?, contact_number=?, email=?
+        WHERE supplier_id=?
+    ''', (supplier_name, contact_person, contact_number, email, supplier_id))
+    connection.commit()
+
+def db_delete_supplier(supplier_id):
+    cursor.execute('''
+        DELETE FROM Supplier
+        WHERE supplier_id=?
+    ''', (supplier_id,))
     connection.commit()
